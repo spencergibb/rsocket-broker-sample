@@ -84,9 +84,9 @@ public class PingApplication {
 										log.info("received " + str + "(" + received + ") in Ping" + id);
 									})
 									.doFinally(signal -> {
-										if (!socket.isDisposed()) {
+										/*if (!socket.isDisposed()) {
 											socket.dispose();
-										}
+										}*/
 									})
 					);
 

@@ -6,3 +6,13 @@ spring:
 
 server:
   port: 0
+
+---
+spring:
+  profiles: pongproxy
+  cloud:
+    gateway:
+      rsocket:
+        id: gateway2
+        server:
+          port: 7003
