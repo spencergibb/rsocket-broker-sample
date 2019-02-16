@@ -1,0 +1,3 @@
+spring.cloud.gateway.rsocket.enabled: false
+server:
+  port: 0
