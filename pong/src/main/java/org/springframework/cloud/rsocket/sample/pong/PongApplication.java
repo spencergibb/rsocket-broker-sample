@@ -24,8 +24,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gateway.rsocket.support.Metadata;
 import org.springframework.context.ApplicationListener;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
@@ -51,33 +51,29 @@ public class PongApplication {
 
 	@Component
 	@Slf4j
-	public static class Pong implements Ordered, ApplicationListener<ApplicationReadyEvent> {
+	public static class Pong implements ApplicationListener<ApplicationReadyEvent> {
+
+		private final String id;
 
 		@Autowired
 		private MeterRegistry meterRegistry;
 
 		private final AtomicInteger pingsReceived = new AtomicInteger();
 
-		@Override
-		public int getOrder() {
-			return 1;
+		public Pong(Environment env) {
+			this.id = env.getProperty("pong.id", "1");
 		}
 
 		@Override
+		@SuppressWarnings("Duplicates")
 		public void onApplicationEvent(ApplicationReadyEvent event) {
 			ConfigurableEnvironment env = event.getApplicationContext().getEnvironment();
-			Integer pongDelay = env.getProperty("pong.delay", Integer.class, 5000);
-			try {
-				Thread.sleep(pongDelay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			log.info("Starting Pong");
 			Integer gatewayPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
 					Integer.class, 7002);
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "pong"));
-			ByteBuf announcementMetadata = Metadata.encodeTags("name:pong", "id:pong1");
+			ByteBuf announcementMetadata = Metadata.encodeTags("name:pong", "id:pong" + id);
 			RSocketFactory.connect()
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
 					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))

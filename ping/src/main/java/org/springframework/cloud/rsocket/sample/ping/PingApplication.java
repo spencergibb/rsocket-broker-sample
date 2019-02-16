@@ -22,8 +22,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gateway.rsocket.support.Metadata;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -39,7 +37,7 @@ public class PingApplication {
 
 	@Component
 	@Slf4j
-	public static class Ping implements Ordered, ApplicationListener<ApplicationReadyEvent> {
+	public static class Ping implements ApplicationListener<ApplicationReadyEvent> {
 
 		@Autowired
 		private MeterRegistry meterRegistry;
@@ -54,19 +52,12 @@ public class PingApplication {
 		}
 
 		@Override
-		public int getOrder() {
-			return 0;
-		}
-
-		@Override
 		public void onApplicationEvent(ApplicationReadyEvent event) {
 			log.info("Starting Ping"+id);
 			ConfigurableEnvironment env = event.getApplicationContext().getEnvironment();
-			Integer take = env.getProperty("ping.take", Integer.class, null);
 			Integer gatewayPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
 					Integer.class, 7002);
 
-			log.debug("ping.take: " + take);
 
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "ping"));
@@ -78,31 +69,25 @@ public class PingApplication {
 					.transport(TcpClientTransport.create(gatewayPort)) // proxy
 					.start()
 					.flatMapMany(socket ->
-							{
-								Flux<String> pong = socket.requestChannel(
-										Flux.interval(Duration.ofSeconds(1))
-												.map(i -> {
-													ByteBuf data = ByteBufUtil
-															.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
-													ByteBuf routingMetadata = Metadata.encodeTags("name:pong");
-													return DefaultPayload.create(data, routingMetadata);
-												})
-												.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8())) // this is needed in case pong is not available yet
-								).map(Payload::getDataUtf8)
-										.doOnNext(str -> {
-											int received = pongsReceived.incrementAndGet();
-											log.info("received " + str + "(" + received + ") in Ping" + id);
-										})
-										.doFinally(signal -> {
-											if (!socket.isDisposed()) {
-												socket.dispose();
-											}
-										});
-								if (take != null) {
-									return pong.take(take);
-								}
-								return pong;
-							}
+							socket.requestChannel(
+									Flux.interval(Duration.ofSeconds(1))
+											.map(i -> {
+												ByteBuf data = ByteBufUtil
+														.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
+												ByteBuf routingMetadata = Metadata.encodeTags("name:pong");
+												return DefaultPayload.create(data, routingMetadata);
+											})
+											.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8())) // this is needed in case pong is not available yet
+							).map(Payload::getDataUtf8)
+									.doOnNext(str -> {
+										int received = pongsReceived.incrementAndGet();
+										log.info("received " + str + "(" + received + ") in Ping" + id);
+									})
+									.doFinally(signal -> {
+										if (!socket.isDisposed()) {
+											socket.dispose();
+										}
+									})
 					);
 
 			pongFlux.subscribe();
