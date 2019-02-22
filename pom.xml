@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<gateway-rsocket.version>0.0.1-SNAPSHOT</gateway-rsocket.version>
+		<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>
 		<rsocket.version>0.11.16</rsocket.version>
 	</properties>
 
@@ -30,23 +30,10 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-gateway-rsocket</artifactId>
-				<version>${gateway-rsocket.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rsocket</groupId>
-				<artifactId>rsocket-core</artifactId>
-				<version>${rsocket.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rsocket</groupId>
-				<artifactId>rsocket-micrometer</artifactId>
-				<version>${rsocket.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.rsocket</groupId>
-				<artifactId>rsocket-transport-netty</artifactId>
-				<version>${rsocket.version}</version>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
