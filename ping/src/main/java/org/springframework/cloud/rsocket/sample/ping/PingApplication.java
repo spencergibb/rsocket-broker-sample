@@ -61,7 +61,7 @@ public class PingApplication {
 
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "ping"));
-			ByteBuf announcementMetadata = Metadata.encodeTags("name:ping", "id:ping"+id);
+			ByteBuf announcementMetadata = Metadata.from("ping").with("id", "ping"+id).encode();
 			pongFlux = RSocketFactory.connect()
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
 					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
@@ -74,7 +74,7 @@ public class PingApplication {
 											.map(i -> {
 												ByteBuf data = ByteBufUtil
 														.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
-												ByteBuf routingMetadata = Metadata.encodeTags("name:pong");
+												ByteBuf routingMetadata = Metadata.from("pong").encode();
 												return DefaultPayload.create(data, routingMetadata);
 											})
 											.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8())) // this is needed in case pong is not available yet

@@ -73,7 +73,7 @@ public class PongApplication {
 					Integer.class, 7002);
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "pong"));
-			ByteBuf announcementMetadata = Metadata.encodeTags("name:pong", "id:pong" + id);
+			ByteBuf announcementMetadata = Metadata.from("pong").with("id", "pong" + id).encode();
 			RSocketFactory.connect()
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
 					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
@@ -99,7 +99,8 @@ public class PongApplication {
 							.map(PongApplication::reply)
 							.map(reply -> {
 								ByteBuf data = ByteBufUtil.writeUtf8(ByteBufAllocator.DEFAULT, reply);
-								ByteBuf routingMetadata = Metadata.encodeTags("name:ping", "id:");
+								//ByteBuf routingMetadata = Metadata.from("ping").encode();
+								ByteBuf routingMetadata = EMPTY_BUFFER;
 								return DefaultPayload.create(data, routingMetadata);
 							});
 				}
