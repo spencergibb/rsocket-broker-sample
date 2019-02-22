@@ -54,7 +54,7 @@ public class GatewayApplication {
 			log.info("Starting Pong Proxy");
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "pongproxy"));
-			ByteBuf announcementMetadata = Metadata.encodeTags("name:pong", "id:pongproxy1");
+			ByteBuf announcementMetadata = Metadata.from("pong").with("id", "pongproxy1").encode();
 			RSocketFactory.connect()
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
 					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
@@ -67,9 +67,10 @@ public class GatewayApplication {
 
 		@SuppressWarnings("Duplicates")
 		RSocket accept(RSocket rSocket) {
-			HashMap<String, String> metadata = new HashMap<>();
-			metadata.put("name", "ping");
-			metadata.put("id", "pingproxy1");
+			Metadata metadata = Metadata.from("ping")
+					.with("id", "pingproxy1")
+					.build();
+
 			registry.register(metadata, rSocket);
 			return rsocketFactory.create(metadata);
 		}
