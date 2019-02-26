@@ -1,6 +1,7 @@
 package org.springframework.cloud.rsocket.sample.pong;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -51,7 +52,7 @@ public class PongApplication {
 
 	@Component
 	@Slf4j
-	public static class Pong implements ApplicationListener<ApplicationReadyEvent> {
+	public static class Pong implements ApplicationListener<ApplicationReadyEvent>, Function<RSocket, RSocket> {
 
 		private final String id;
 
@@ -78,38 +79,35 @@ public class PongApplication {
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
 					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
 					.addClientPlugin(interceptor)
-					.acceptor(this::accept)
+					.acceptor(this)
 					.transport(TcpClientTransport.create(gatewayPort)) // proxy
 					.start()
 					.block();
 		}
 
-		@SuppressWarnings("Duplicates")
-		RSocket accept(RSocket rSocket) {
-			RSocket pong = new RSocketProxy(rSocket) {
+		@Override
+		public RSocket apply(RSocket rSocket) {
+			return new RSocketProxy(rSocket) {
 
 				@Override
 				public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
 					return Flux.from(payloads)
 							.map(Payload::getDataUtf8)
-							.doOnNext(str -> {
-								int received = pingsReceived.incrementAndGet();
-								log.info("received " + str + "("+received+") in Pong");
-							})
+							.doOnNext(this::logPings)
 							.map(PongApplication::reply)
-							.map(reply -> {
-								ByteBuf data = ByteBufUtil.writeUtf8(ByteBufAllocator.DEFAULT, reply);
-								//ByteBuf routingMetadata = Metadata.from("ping").encode();
-								ByteBuf routingMetadata = EMPTY_BUFFER;
-								return DefaultPayload.create(data, routingMetadata);
-							});
+							.map(this::toPayload);
+				}
+
+				private void logPings(String str) {
+					int received = pingsReceived.incrementAndGet();
+					log.info("received " + str + "("+received+") in Pong");
+				}
+
+				private Payload toPayload(String reply) {
+					ByteBuf data = ByteBufUtil.writeUtf8(ByteBufAllocator.DEFAULT, reply);
+					return DefaultPayload.create(data, EMPTY_BUFFER);
 				}
 			};
-			return pong;
-		}
-
-		public int getPingsReceived() {
-			return pingsReceived.get();
 		}
 	}
 

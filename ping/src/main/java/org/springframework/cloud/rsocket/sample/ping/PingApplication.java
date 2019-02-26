@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import io.rsocket.Payload;
+import io.rsocket.RSocket;
 import io.rsocket.RSocketFactory;
 import io.rsocket.micrometer.MicrometerRSocketInterceptor;
 import io.rsocket.transport.netty.client.TcpClientTransport;
@@ -68,35 +69,33 @@ public class PingApplication {
 					.addClientPlugin(interceptor)
 					.transport(TcpClientTransport.create(gatewayPort)) // proxy
 					.start()
-					.flatMapMany(socket ->
-							socket.requestChannel(
-									Flux.interval(Duration.ofSeconds(1))
-											.map(i -> {
-												ByteBuf data = ByteBufUtil
-														.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
-												ByteBuf routingMetadata = Metadata.from("pong").encode();
-												return DefaultPayload.create(data, routingMetadata);
-											})
-											.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8())) // this is needed in case pong is not available yet
-							).map(Payload::getDataUtf8)
-									.doOnNext(str -> {
-										int received = pongsReceived.incrementAndGet();
-										log.info("received " + str + "(" + received + ") in Ping" + id);
-									})
-									.doFinally(signal -> {
-										/*if (!socket.isDisposed()) {
-											socket.dispose();
-										}*/
-									})
-					);
+					.flatMapMany(this::handleRSocket);
 
 			pongFlux.subscribe();
 		}
 
-		public Flux<String> getPongFlux() {
-			return pongFlux;
+		private Flux<String> handleRSocket(RSocket socket) {
+			return socket.requestChannel(sendPings()
+					// this is needed in case pong is not available yet
+					.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8()))
+			).map(Payload::getDataUtf8)
+					.doOnNext(this::logPongs);
 		}
 
+		private Flux<Payload> sendPings() {
+			return Flux.interval(Duration.ofSeconds(1))
+					.map(i -> {
+						ByteBuf data = ByteBufUtil
+								.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
+						ByteBuf routingMetadata = Metadata.from("pong").encode();
+						return DefaultPayload.create(data, routingMetadata);
+					});
+		}
+
+		private void logPongs(String payload) {
+			int received = pongsReceived.incrementAndGet();
+			log.info("received " + payload + "(" + received + ") in Ping" + id);
+		}
 	}
 }
 
