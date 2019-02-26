@@ -8,16 +8,20 @@ import io.micrometer.core.instrument.Tag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
+import io.rsocket.ConnectionSetupPayload;
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
 import io.rsocket.RSocketFactory;
+import io.rsocket.SocketAcceptor;
 import io.rsocket.micrometer.MicrometerRSocketInterceptor;
 import io.rsocket.transport.netty.client.TcpClientTransport;
+import io.rsocket.transport.netty.server.TcpServerTransport;
 import io.rsocket.util.DefaultPayload;
 import io.rsocket.util.RSocketProxy;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -52,7 +56,8 @@ public class PongApplication {
 
 	@Component
 	@Slf4j
-	public static class Pong implements ApplicationListener<ApplicationReadyEvent>, Function<RSocket, RSocket> {
+	public static class Pong implements ApplicationListener<ApplicationReadyEvent>,
+			SocketAcceptor, Function<RSocket, RSocket> {
 
 		private final String id;
 
@@ -69,20 +74,39 @@ public class PongApplication {
 		@SuppressWarnings("Duplicates")
 		public void onApplicationEvent(ApplicationReadyEvent event) {
 			ConfigurableEnvironment env = event.getApplicationContext().getEnvironment();
-			log.info("Starting Pong");
-			Integer gatewayPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
+
+			Boolean isClient = env.getProperty("pong.client", Boolean.class, true);
+
+			log.info("Starting Pong isClient: " + isClient);
+			Integer port = env.getProperty("spring.cloud.gateway.rsocket.server.port",
 					Integer.class, 7002);
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "pong"));
 			ByteBuf announcementMetadata = Metadata.from("pong").with("id", "pong" + id).encode();
-			RSocketFactory.connect()
-					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
-					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
-					.addClientPlugin(interceptor)
-					.acceptor(this)
-					.transport(TcpClientTransport.create(gatewayPort)) // proxy
-					.start()
-					.block();
+
+			if (isClient) {
+				RSocketFactory.connect()
+						.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
+						.setupPayload(DefaultPayload
+								.create(EMPTY_BUFFER, announcementMetadata))
+						.addClientPlugin(interceptor)
+						.acceptor(this)
+						.transport(TcpClientTransport.create(port)) // proxy
+						.start()
+						.block();
+			} else { // start server
+				RSocketFactory.receive()
+						.addServerPlugin(interceptor)
+						.acceptor(this)
+						.transport(TcpServerTransport.create(port)) // listen on port
+						.start()
+						.subscribe();
+			}
+		}
+
+		@Override
+		public Mono<RSocket> accept(ConnectionSetupPayload setup, RSocket sendingSocket) {
+			return Mono.just(apply(sendingSocket));
 		}
 
 		@Override
