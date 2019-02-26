@@ -1,7 +1,5 @@
 package org.springframework.cloud.rsocket.sample.gateway;
 
-import java.util.HashMap;
-
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.netty.buffer.ByteBuf;

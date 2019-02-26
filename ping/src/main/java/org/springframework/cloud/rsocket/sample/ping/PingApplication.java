@@ -61,7 +61,7 @@ public class PingApplication {
 			String requestType = env.getProperty("ping.request-type", "request-channel");
 			log.info("Starting Ping"+id+" request type: " + requestType);
 
-			Integer gatewayPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
+			Integer serverPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
 					Integer.class, 7002);
 
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
@@ -80,7 +80,7 @@ public class PingApplication {
 					.setupPayload(DefaultPayload
 							.create(EMPTY_BUFFER, announcementMetadata))
 					.addClientPlugin(interceptor)
-					.transport(TcpClientTransport.create(gatewayPort)) // proxy
+					.transport(TcpClientTransport.create(serverPort))
 					.start()
 					.flatMapMany(handler);
 
