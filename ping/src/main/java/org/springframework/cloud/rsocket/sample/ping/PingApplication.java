@@ -2,6 +2,7 @@ package org.springframework.cloud.rsocket.sample.ping;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -15,6 +16,7 @@ import io.rsocket.micrometer.MicrometerRSocketInterceptor;
 import io.rsocket.transport.netty.client.TcpClientTransport;
 import io.rsocket.util.DefaultPayload;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,27 +56,45 @@ public class PingApplication {
 
 		@Override
 		public void onApplicationEvent(ApplicationReadyEvent event) {
-			log.info("Starting Ping"+id);
 			ConfigurableEnvironment env = event.getApplicationContext().getEnvironment();
+
+			String requestType = env.getProperty("ping.request-type", "request-channel");
+			log.info("Starting Ping"+id+" request type: " + requestType);
+
 			Integer gatewayPort = env.getProperty("spring.cloud.gateway.rsocket.server.port",
 					Integer.class, 7002);
-
 
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "ping"));
 			ByteBuf announcementMetadata = Metadata.from("ping").with("id", "ping"+id).encode();
+
+			Function<RSocket, Publisher<String>> handler;
+			if (requestType.equals("request-response")) {
+				handler = this::handleRequestResponse;
+			} else {
+				handler = this::handleRequestChannel;
+			}
+
 			pongFlux = RSocketFactory.connect()
 					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
-					.setupPayload(DefaultPayload.create(EMPTY_BUFFER, announcementMetadata))
+					.setupPayload(DefaultPayload
+							.create(EMPTY_BUFFER, announcementMetadata))
 					.addClientPlugin(interceptor)
 					.transport(TcpClientTransport.create(gatewayPort)) // proxy
 					.start()
-					.flatMapMany(this::handleRSocket);
+					.flatMapMany(handler);
 
 			pongFlux.subscribe();
 		}
 
-		private Flux<String> handleRSocket(RSocket socket) {
+		private Flux<String> handleRequestResponse(RSocket rSocket) {
+			return Flux.interval(Duration.ofSeconds(1))
+					.flatMap(i -> rSocket.requestResponse(getPayload(i))
+							.map(Payload::getDataUtf8)
+							.doOnNext(this::logPongs));
+		}
+
+		private Flux<String> handleRequestChannel(RSocket socket) {
 			return socket.requestChannel(sendPings()
 					// this is needed in case pong is not available yet
 					.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8()))
@@ -84,12 +104,14 @@ public class PingApplication {
 
 		private Flux<Payload> sendPings() {
 			return Flux.interval(Duration.ofSeconds(1))
-					.map(i -> {
-						ByteBuf data = ByteBufUtil
-								.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
-						ByteBuf routingMetadata = Metadata.from("pong").encode();
-						return DefaultPayload.create(data, routingMetadata);
-					});
+					.map(this::getPayload);
+		}
+
+		private Payload getPayload(long i) {
+			ByteBuf data = ByteBufUtil
+					.writeUtf8(ByteBufAllocator.DEFAULT, "ping" + id);
+			ByteBuf routingMetadata = Metadata.from("pong").encode();
+			return DefaultPayload.create(data, routingMetadata);
 		}
 
 		private void logPongs(String payload) {

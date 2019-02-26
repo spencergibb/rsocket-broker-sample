@@ -114,6 +114,15 @@ public class PongApplication {
 			return new RSocketProxy(rSocket) {
 
 				@Override
+				public Mono<Payload> requestResponse(Payload payload) {
+					return Mono.just(payload)
+							.map(Payload::getDataUtf8)
+							.doOnNext(this::logPings)
+							.map(PongApplication::reply)
+							.map(this::toPayload);
+				}
+
+				@Override
 				public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
 					return Flux.from(payloads)
 							.map(Payload::getDataUtf8)
