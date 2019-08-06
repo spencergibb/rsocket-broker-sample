@@ -21,12 +21,13 @@ management:
 ---
 spring:
   profiles: pongproxy
+  rsocket:
+    server:
+      port: 7003
   cloud:
     gateway:
       rsocket:
         id: gateway2
-        server:
-          port: 7003
 management:
   server:
     port: 18081

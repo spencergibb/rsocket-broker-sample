@@ -78,7 +78,7 @@ public class PongApplication {
 			Boolean isClient = env.getProperty("pong.client", Boolean.class, true);
 
 			log.info("Starting Pong isClient: " + isClient);
-			Integer port = env.getProperty("spring.cloud.gateway.rsocket.server.port",
+			Integer port = env.getProperty("spring.rsocket.server.port",
 					Integer.class, 7002);
 			MicrometerRSocketInterceptor interceptor = new MicrometerRSocketInterceptor(meterRegistry, Tag
 					.of("component", "pong"));
