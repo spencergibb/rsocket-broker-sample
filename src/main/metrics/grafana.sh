@@ -8,6 +8,8 @@
 
 # we keep the config file for persistence and later use
 
+# http://localhost:3000 for grafana
+
 CONFIG_DIR=$(dirname $(readlink -f $0))
 
 docker run -p 3000:3000 \

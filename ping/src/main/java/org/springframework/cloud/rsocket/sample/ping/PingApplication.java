@@ -97,7 +97,7 @@ public class PingApplication {
 		private Flux<String> handleRequestChannel(RSocket socket) {
 			return socket.requestChannel(sendPings()
 					// this is needed in case pong is not available yet
-					.onBackpressureDrop(payload -> log.info("Dropped payload " + payload.getDataUtf8()))
+					.onBackpressureDrop(payload -> log.info("Backpressure applied, dropping payload " + payload.getDataUtf8()))
 			).map(Payload::getDataUtf8)
 					.doOnNext(this::logPongs);
 		}

@@ -1,3 +1,14 @@
 spring.cloud.gateway.rsocket.enabled: false
 server:
   port: 0
+
+---
+spring:
+  profiles: server
+pong:
+  client: false
+
+---
+spring:
+  profiles: pongproxy
+  cloud.gateway.rsocket.server.port: 7003
