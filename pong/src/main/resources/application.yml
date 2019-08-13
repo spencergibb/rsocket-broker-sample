@@ -2,6 +2,9 @@ spring.cloud.gateway.rsocket.enabled: false
 server:
   port: 0
 
+logging:
+  level:
+    org.springframework.messaging.rsocket: INFO
 ---
 spring:
   profiles: server
