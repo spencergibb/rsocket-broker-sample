@@ -1,10 +1,24 @@
-spring.cloud.gateway.rsocket.enabled: false
+spring.cloud.gateway.rsocket.client:
+  route-id: 1
+  service-name: ping
+  tags:
+    INSTANCE_NAME: ping1
+  broker:
+    host: localhost
+    port: 7002
+
 server:
   port: 0
 
+debug: true
 ---
 spring:
   profiles: ping2
+
+spring.cloud.gateway.rsocket.client:
+  route-id: 2
+  tags:
+    INSTANCE_NAME: ping2
+
 ping:
-  id: 2
   request-type: request-response

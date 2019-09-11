@@ -3,6 +3,8 @@ spring:
     gateway:
       rsocket:
         id: gateway1
+        route-id: 11
+        service-name: gateway
 
 server:
   port: 0
