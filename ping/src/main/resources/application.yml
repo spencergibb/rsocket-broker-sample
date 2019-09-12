@@ -21,4 +21,4 @@ spring.cloud.gateway.rsocket.client:
     INSTANCE_NAME: ping2
 
 ping:
-  request-type: request-response
+  request-type: request_response
