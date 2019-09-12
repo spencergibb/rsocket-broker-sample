@@ -6,9 +6,6 @@ spring:
         route-id: 11
         service-name: gateway
 
-server:
-  port: 0
-
 logging:
   level:
     org.springframework.cloud.gateway.rsocket: DEBUG

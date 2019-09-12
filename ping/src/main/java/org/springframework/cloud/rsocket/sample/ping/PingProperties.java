@@ -15,7 +15,7 @@ public class PingProperties {
 		this.requestType = requestType;
 	}
 
-	static enum RequestType {
+	enum RequestType {
 		REQUEST_CHANNEL,
 		REQUEST_RESPONSE,
 		ACTUATOR
