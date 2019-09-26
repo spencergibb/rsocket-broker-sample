@@ -8,12 +8,13 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 import org.springframework.cloud.gateway.rsocket.client.BrokerClient;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PingService {
+public class PingService implements ApplicationListener<PayloadApplicationEvent<RSocketRequester>> {
 
 	private static final Logger logger = LoggerFactory.getLogger(PingService.class);
 
@@ -28,10 +29,11 @@ public class PingService {
 		this.properties = properties;
 	}
 
-	@EventListener
-	public void onRSocketRequester(RSocketRequester requester) {
+	@Override
+	public void onApplicationEvent(PayloadApplicationEvent<RSocketRequester> event) {
 		logger.info("Starting Ping" + client.getProperties().getRouteId() + " request type: " + properties.getRequestType());
 		//RSocketRequester requester = client.connect().retry(5).block();
+		RSocketRequester requester = event.getPayload();
 
 		switch (properties.getRequestType()) {
 			case REQUEST_RESPONSE:
