@@ -7,14 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gateway.rsocket.client.BrokerClient;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PingService implements ApplicationListener<ApplicationReadyEvent> {
+public class PingService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PingService.class);
 
@@ -29,11 +28,10 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 		this.properties = properties;
 	}
 
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent event) {
+	@EventListener
+	public void onRSocketRequester(RSocketRequester requester) {
 		logger.info("Starting Ping" + client.getProperties().getRouteId() + " request type: " + properties.getRequestType());
-		RSocketRequester requester = client.connect().retry(5).block();
+		//RSocketRequester requester = client.connect().retry(5).block();
 
 		switch (properties.getRequestType()) {
 			case REQUEST_RESPONSE:
@@ -43,7 +41,8 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 								.data("ping" + i)
 								.retrieveMono(String.class)
 								.doOnNext(this::logPongs))
-						.then().block();
+						//.then().block();
+						.subscribe();
 				break;
 
 			case REQUEST_CHANNEL:
@@ -54,7 +53,8 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 										.info("Backpressure applied, dropping payload " + payload)))
 						.retrieveFlux(String.class)
 						.doOnNext(this::logPongs)
-						.then().block();
+						//.then().block();
+						.subscribe();
 				break;
 
 			case ACTUATOR:

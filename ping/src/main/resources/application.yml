@@ -7,6 +7,8 @@ spring.cloud.gateway.rsocket.client:
     host: localhost
     port: 7002
 
+server:
+  port: 0
 #debug: true
 ---
 spring:
