@@ -10,16 +10,9 @@ logging:
   level:
     org.springframework.cloud.gateway.rsocket: DEBUG
 #    org.springframework.cloud.gateway.rsocket: TRACE
-management:
-  server:
-    port: 18080
-  endpoints:
-    web:
-      exposure:
-        include: '*'
 ---
 spring:
-  profiles: pongproxy
+  profiles: gateway2
   rsocket:
     server:
       port: 7003
@@ -27,10 +20,8 @@ spring:
     gateway:
       rsocket:
         id: gateway2
-management:
-  server:
-    port: 18081
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+        route-id: 12
+        service-name: gateway
+        brokers:
+          - host: localhost
+            port: 7002

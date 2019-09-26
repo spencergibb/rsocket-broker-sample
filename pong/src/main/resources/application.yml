@@ -21,5 +21,17 @@ pong:
 
 ---
 spring:
-  profiles: pongproxy
-  cloud.gateway.rsocket.client.server.port: 7003
+  profiles: pong4
+spring.cloud.gateway.rsocket.client:
+  route-id: 4
+  service-name: pong
+  tags:
+    INSTANCE_NAME: pong4
+
+---
+spring:
+  profiles: gateway2
+  cloud.gateway.rsocket.client:
+    broker:
+      host: localhost
+      port: 7003

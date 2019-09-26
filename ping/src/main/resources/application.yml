@@ -19,3 +19,11 @@ spring.cloud.gateway.rsocket.client:
 
 ping:
   request-type: request_response
+
+---
+spring:
+  profiles: gateway2
+  cloud.gateway.rsocket.client:
+    broker:
+      host: localhost
+      port: 7003

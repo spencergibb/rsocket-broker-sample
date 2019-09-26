@@ -39,7 +39,7 @@ Run pong.
 
 ## Gateway Cluster Mode
 
-Run gateway for first node. The run another gateway with `spring.profiles.active=pongproxy`
+Run gateway for first node. The run another gateway with `spring.profiles.active=gateway2`
 
 You should see logs like this in 2nd gateway node:
 ```
@@ -49,14 +49,14 @@ You should see logs like this in 2nd gateway node:
 
 And in the first gateway node:
 ```
-2019-08-09 11:36:12.573 DEBUG 19475 --- [or-http-epoll-2] o.s.c.gateway.rsocket.registry.Registry  : Registering RSocket: [Metadata@318e483 name = 'pong', properties = map['id' -> 'pongproxy1']]
-2019-08-09 11:36:12.575 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@6796b8e4 id = 'pong', targetMetadata = [Metadata@318e483 name = 'pong', properties = map['id' -> 'pongproxy1']], order = 0, predicate = org.springframework.cloud.gateway.rsocket.registry.RegistryRoutes$$Lambda$523/976465559@11bf03ce, gatewayFilters = list[[empty]]]
+2019-08-09 11:36:12.573 DEBUG 19475 --- [or-http-epoll-2] o.s.c.gateway.rsocket.registry.Registry  : Registering RSocket: [Metadata@318e483 name = 'pong', properties = map['id' -> 'gateway21']]
+2019-08-09 11:36:12.575 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@6796b8e4 id = 'pong', targetMetadata = [Metadata@318e483 name = 'pong', properties = map['id' -> 'gateway21']], order = 0, predicate = org.springframework.cloud.gateway.rsocket.registry.RegistryRoutes$$Lambda$523/976465559@11bf03ce, gatewayFilters = list[[empty]]]
 2019-08-09 11:36:12.576 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.r.s.SocketAcceptorFilterChain    : filter chain completed with success
 ```
 
 Run ping, you should see backpressure logs as above.
 
-Run pong with `spring.profiles.active=pongproxy`.
+Run pong with `spring.profiles.active=gateway2`.
 
 You should see successful log messages in ping and pong.
 
