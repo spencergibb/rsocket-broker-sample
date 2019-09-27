@@ -14,11 +14,9 @@ public class PongService {
 
 	private static final Logger log = LoggerFactory.getLogger(PongService.class);
 
-	private final BrokerClient brokerClient;
 	private final Environment env;
 
-	public PongService(BrokerClient brokerClient, Environment env) {
-		this.brokerClient = brokerClient;
+	public PongService(Environment env) {
 		this.env = env;
 	}
 
@@ -28,19 +26,8 @@ public class PongService {
 
 		log.info("Starting Pong isClient: " + isClient);
 
-		if (isClient) {
-			//brokerClient.connect().block();
-			/*RSocketFactory.connect()
-					.metadataMimeType(Metadata.ROUTING_MIME_TYPE)
-					.setupPayload(DefaultPayload
-							.create(EMPTY_BUFFER, announcementMetadata))
-					.addClientPlugin(interceptor)
-					.acceptor(this)
-					.transport(TcpClientTransport.create(port)) // proxy
-					.start()
-					.block();*/
-		} else { // start server
-			/*RSocketFactory.receive()
+		if (!isClient) {
+			/*FIXME: RSocketFactory.receive()
 					.addServerPlugin(interceptor)
 					.acceptor(this)
 					.transport(TcpServerTransport.create(port)) // listen on port
