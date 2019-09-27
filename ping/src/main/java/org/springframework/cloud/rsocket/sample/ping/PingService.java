@@ -49,7 +49,8 @@ public class PingService implements ApplicationListener<PayloadApplicationEvent<
 
 			case REQUEST_CHANNEL:
 				requester.route("pong-rc")
-						.metadata(client.forwarding(builder -> builder.serviceName("pong").with("multicast", "true")))
+						// metadata not needed. Auto added with gateway rsocket client via properties
+						//.metadata(client.forwarding(builder -> builder.serviceName("pong").with("multicast", "true")))
 						.data(Flux.interval(Duration.ofSeconds(1)).map(this::getPayload)
 								.onBackpressureDrop(payload -> logger
 										.info("Backpressure applied, dropping payload " + payload)))
