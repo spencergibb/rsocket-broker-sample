@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-gateway-rsocket-client</artifactId>
+			<artifactId>spring-cloud-rsocket-client</artifactId>
 		</dependency>
 	</dependencies>
 

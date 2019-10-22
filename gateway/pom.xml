@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-gateway-rsocket-broker</artifactId>
+			<artifactId>spring-cloud-rsocket-broker</artifactId>
 		</dependency>
 	</dependencies>
 
