@@ -1,0 +1,24 @@
+io.rsocket.routing.broker:
+  broker-id: 00000000-0000-0000-0000-000000000011
+  tcp.port: 8002
+  cluster.port: 7002
+
+logging:
+  level:
+    io.rsocket.routing.broker: DEBUG
+#    io.rsocket.routing.broker: TRACE
+---
+spring:
+  profiles: broker2
+
+io.rsocket.routing.broker:
+  broker-id: 00000000-0000-0000-0000-000000000012
+  tcp.port: 8003
+  cluster.port: 7003
+  brokers:
+    - cluster:
+        host: localhost
+        port: 7002
+      proxy:
+        host: localhost
+        port: 8002

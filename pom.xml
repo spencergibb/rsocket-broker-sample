@@ -5,42 +5,45 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.0.BUILD-SNAPSHOT</version>
+		<version>2.2.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.springframework.cloud.rsocket</groupId>
-	<artifactId>spring-cloud-gateway-rsocket-sample</artifactId>
+	<groupId>rsocket.routing.sample</groupId>
+	<artifactId>rsocket-routing-sample</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>spring-cloud-gateway-rsocket-sample</name>
+	<name>rsocket-routing-sample</name>
 
 	<properties>
 		<java.version>1.8</java.version>
-		<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>
-		<spring-cloud-rsocket.version>0.2.0.BUILD-SNAPSHOT</spring-cloud-rsocket.version>
+		<!--<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>-->
+		<rsocket-routing.version>0.0.1-SNAPSHOT</rsocket-routing.version>
 	</properties>
 
 	<modules>
 		<module>ping</module>
 		<module>pong</module>
-		<module>gateway</module>
+		<module>broker</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
+			<!--<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>-->
+			<dependency>
+				<groupId>io.rsocket.routing</groupId>
+				<artifactId>rsocket-routing-client-spring</artifactId>
+				<version>${rsocket-routing.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-rsocket-dependencies</artifactId>
-				<version>${spring-cloud-rsocket.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+				<groupId>io.rsocket.routing</groupId>
+				<artifactId>rsocket-routing-broker-spring</artifactId>
+				<version>${rsocket-routing.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

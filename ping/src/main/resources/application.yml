@@ -1,14 +1,14 @@
-spring.cloud.gateway.rsocket.client:
-  route-id: 1
+io.rsocket.routing.client:
+  route-id: 00000000-0000-0000-0000-000000000001
   service-name: ping
   tags:
     INSTANCE_NAME: ping1
-  forwarding:
+  address:
     pong-rc:
       service_name: pong
-  broker:
-    host: localhost
-    port: 7002
+  brokers:
+    - host: localhost
+      port: 8002
 
 server:
   port: 0
@@ -17,8 +17,8 @@ server:
 spring:
   profiles: ping2
 
-spring.cloud.gateway.rsocket.client:
-  route-id: 2
+io.rsocket.routing.client:
+  route-id: 00000000-0000-0000-0000-000000000002
   tags:
     INSTANCE_NAME: ping2
 
@@ -27,8 +27,9 @@ ping:
 
 ---
 spring:
-  profiles: gateway2
-  cloud.gateway.rsocket.client:
-    broker:
-      host: localhost
-      port: 7003
+  profiles: broker2
+
+io.rsocket.routing.client:
+    brokers:
+      - host: localhost
+        port: 8003

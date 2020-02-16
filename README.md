@@ -1,8 +1,8 @@
-# Spring Cloud Gateway RSocket Sample
+# Spring Cloud Broker RSocket Sample
 
 ## TODO:
 
-- [ ] Move ping and pong to use Spring Framework RSocket Messaging rather than raw RSocket
+- [X] Move ping and pong to use Spring Framework RSocket Messaging rather than raw RSocket
 - [ ] Multiple pong servers to highlight gateway load balancing.
 - [ ] Golang ping requester to highlight RSocket polyglot
 - [ ] JS ping requester from browser. (Likely needs changes in gateway)
@@ -21,11 +21,11 @@ And in ping you should see logs like:
 2019-08-09 11:32:20.189  INFO 16077 --- [tor-tcp-epoll-1] o.s.c.r.s.ping.PingApplication$Ping      : received pong(2) in Ping1
 ```
 
-## Direct Mode: No Gateway
+## Direct Mode: No Broker
 
 Run pong with `spring.profiles.active=server`. Then run ping.
 
-## Single Gateway Mode
+## Single Broker Mode
 
 Run gateway first. Then run ping. 
 
@@ -37,26 +37,26 @@ You should see backpressure logs like:
 
 Run pong. 
 
-## Gateway Cluster Mode
+## Broker Cluster Mode
 
-Run gateway for first node. The run another gateway with `spring.profiles.active=gateway2`
+Run broker for first node. The run another broker with `spring.profiles.active=broker2`
 
-You should see logs like this in 2nd gateway node:
+You should see logs like this in 2nd broker node:
 ```
-2019-08-09 11:36:12.524 DEBUG 19644 --- [tor-tcp-epoll-1] o.s.c.gateway.rsocket.registry.Registry  : Registering RSocket: [Metadata@5015196c name = 'ping', properties = map['id' -> 'pingproxy1']]
-2019-08-09 11:36:12.526 DEBUG 19644 --- [tor-tcp-epoll-1] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@57801e07 id = 'ping', targetMetadata = [Metadata@5015196c name = 'ping', properties = map['id' -> 'pingproxy1']], order = 0, predicate = org.springframework.cloud.gateway.rsocket.registry.RegistryRoutes$$Lambda$536/302508515@57d6f132, gatewayFilters = list[[empty]]]
+2019-08-09 11:36:12.524 DEBUG 19644 --- [tor-tcp-epoll-1] o.s.c.broker.rsocket.registry.Registry  : Registering RSocket: [Metadata@5015196c name = 'ping', properties = map['id' -> 'pingproxy1']]
+2019-08-09 11:36:12.526 DEBUG 19644 --- [tor-tcp-epoll-1] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@57801e07 id = 'ping', targetMetadata = [Metadata@5015196c name = 'ping', properties = map['id' -> 'pingproxy1']], order = 0, predicate = org.springframework.cloud.broker.rsocket.registry.RegistryRoutes$$Lambda$536/302508515@57d6f132, brokerFilters = list[[empty]]]
 ```
 
-And in the first gateway node:
+And in the first broker node:
 ```
-2019-08-09 11:36:12.573 DEBUG 19475 --- [or-http-epoll-2] o.s.c.gateway.rsocket.registry.Registry  : Registering RSocket: [Metadata@318e483 name = 'pong', properties = map['id' -> 'gateway21']]
-2019-08-09 11:36:12.575 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@6796b8e4 id = 'pong', targetMetadata = [Metadata@318e483 name = 'pong', properties = map['id' -> 'gateway21']], order = 0, predicate = org.springframework.cloud.gateway.rsocket.registry.RegistryRoutes$$Lambda$523/976465559@11bf03ce, gatewayFilters = list[[empty]]]
+2019-08-09 11:36:12.573 DEBUG 19475 --- [or-http-epoll-2] o.s.c.broker.rsocket.registry.Registry  : Registering RSocket: [Metadata@318e483 name = 'pong', properties = map['id' -> 'broker21']]
+2019-08-09 11:36:12.575 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.rsocket.registry.RegistryRoutes  : Created Route for registered service [Route@6796b8e4 id = 'pong', targetMetadata = [Metadata@318e483 name = 'pong', properties = map['id' -> 'broker21']], order = 0, predicate = org.springframework.cloud.broker.rsocket.registry.RegistryRoutes$$Lambda$523/976465559@11bf03ce, brokerFilters = list[[empty]]]
 2019-08-09 11:36:12.576 DEBUG 19475 --- [or-http-epoll-2] o.s.c.g.r.s.SocketAcceptorFilterChain    : filter chain completed with success
 ```
 
 Run ping, you should see backpressure logs as above.
 
-Run pong with `spring.profiles.active=gateway2`.
+Run pong with `spring.profiles.active=broker2`.
 
 You should see successful log messages in ping and pong.
 
