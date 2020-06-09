@@ -45,6 +45,11 @@
 				<artifactId>rsocket-routing-broker-spring</artifactId>
 				<version>${rsocket-routing.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>io.rsocket.routing</groupId>
+				<artifactId>rsocket-routing-frames</artifactId>
+				<version>${rsocket-routing.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
