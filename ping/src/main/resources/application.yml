@@ -33,3 +33,14 @@ io.rsocket.routing.client:
     brokers:
       - host: localhost
         port: 8003
+
+
+---
+spring:
+  profiles: nomad
+
+io.rsocket.routing.client:
+  brokers:
+    - host: localhost
+      port: 9001
+

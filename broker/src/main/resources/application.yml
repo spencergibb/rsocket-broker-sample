@@ -1,7 +1,7 @@
 io.rsocket.routing.broker:
   broker-id: 00000000-0000-0000-0000-000000000011
   tcp.port: 8002
-  cluster.port: 7002
+  cluster.tcp.port: 7002
 
 logging:
   level:
@@ -14,11 +14,12 @@ spring:
 io.rsocket.routing.broker:
   broker-id: 00000000-0000-0000-0000-000000000012
   tcp.port: 8003
-  cluster.port: 7003
+  cluster.tcp:
+    port: 7003
   brokers:
-    - cluster:
+    - cluster.tcp:
         host: localhost
         port: 7002
-      proxy:
+      proxy.tcp:
         host: localhost
         port: 8002

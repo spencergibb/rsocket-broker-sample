@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
@@ -21,8 +22,9 @@ public class PongController {
 	}
 
 	@MessageMapping("pong-rc")
-	public Flux<String> pong(Flux<String> pings) {
-		return pings.doOnNext(this::logPings)
+	public Flux<String> pong(Flux<PingValue> pings) {
+		return pings.map(PingValue::getValue)
+				.doOnNext(this::logPings)
 				.map(this::reply);
 	}
 
@@ -40,6 +42,33 @@ public class PongController {
 			return "pong";
 		default:
 			throw new IllegalArgumentException("Value must be ping, not " + in);
+		}
+	}
+
+	static class PingValue {
+		String value;
+
+		public PingValue() {
+		}
+
+		PingValue(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return this.value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return new ToStringCreator(this)
+					.append("value", value)
+					.toString();
+
 		}
 	}
 
