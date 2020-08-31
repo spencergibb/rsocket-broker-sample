@@ -3,8 +3,9 @@ package rsocket.routing.sample.ping;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.rsocket.routing.client.spring.RoutingRSocketRequester;
+import io.rsocket.routing.client.spring.RoutingClientProperties;
 import io.rsocket.routing.client.spring.RoutingMetadata;
-import io.rsocket.routing.config.RoutingClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -12,7 +13,6 @@ import reactor.core.publisher.Flux;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +20,7 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(PingService.class);
 
-	private final RSocketRequester requester;
+	private final RoutingRSocketRequester requester;
 	private final RoutingMetadata metadata;
 
 	private final PingProperties properties;
@@ -28,7 +28,7 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 
 	private final AtomicInteger pongsReceived = new AtomicInteger();
 
-	public PingService(RSocketRequester requester, RoutingMetadata metadata, PingProperties properties,
+	public PingService(RoutingRSocketRequester requester, RoutingMetadata metadata, PingProperties properties,
 			RoutingClientProperties routingClientProperties) {
 		this.requester = requester;
 		this.metadata = metadata;
@@ -44,7 +44,9 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 			case REQUEST_RESPONSE:
 				Flux.interval(Duration.ofSeconds(1))
 						.flatMap(i -> requester.route("pong-rr")
-								.metadata(metadata.address("pong"))
+								.address("pong")
+								//.address(builder -> builder.with(WellKnownKey.SERVICE_NAME, "pong"))
+								//.metadata(metadata.address("pong"))
 								.data("ping" + i)
 								.retrieveMono(String.class)
 								.doOnNext(this::logPongs))
