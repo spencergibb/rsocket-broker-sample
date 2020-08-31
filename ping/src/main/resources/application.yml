@@ -7,15 +7,15 @@ io.rsocket.routing.client:
     pong-rc:
       service_name: pong
   brokers:
-    - host: localhost
-      port: 8002
+    - tcp:
+        host: localhost
+        port: 8002
 
 server:
   port: 0
 #debug: true
 ---
-spring:
-  profiles: ping2
+spring.config.activate.on-profile: ping2
 
 io.rsocket.routing.client:
   route-id: 00000000-0000-0000-0000-000000000002
@@ -26,21 +26,11 @@ ping:
   request-type: request_response
 
 ---
-spring:
-  profiles: broker2
+spring.config.activate.on-profile: broker2
 
 io.rsocket.routing.client:
     brokers:
-      - host: localhost
-        port: 8003
-
-
----
-spring:
-  profiles: nomad
-
-io.rsocket.routing.client:
-  brokers:
-    - host: localhost
-      port: 9001
+      - tcp:
+          host: localhost
+          port: 8003
 

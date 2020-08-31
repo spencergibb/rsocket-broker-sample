@@ -4,21 +4,20 @@ io.rsocket.routing.client:
   tags:
     INSTANCE_NAME: pong3
   brokers:
-    - host: localhost
-      port: 8002
+    - tcp:
+        host: localhost
+        port: 8002
 
 logging:
   level:
     io.rsocket.routing.client: INFO
 ---
-spring:
-  profiles: server
+spring.config.activate.on-profile: server
 pong:
   client: false
 
 ---
-spring:
-  profiles: pong4
+spring.config.activate.on-profile: pong4
 
 io.rsocket.routing.client:
   route-id: 00000000-0000-0000-0000-000000000004
@@ -27,10 +26,10 @@ io.rsocket.routing.client:
     INSTANCE_NAME: pong4
 
 ---
-spring:
-  profiles: broker2
+spring.config.activate.on-profile: broker2
 
 io.rsocket.routing.client:
   brokers:
-    - host: localhost
-      port: 8003
+    - tcp:
+        host: localhost
+        port: 8003

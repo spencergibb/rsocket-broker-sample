@@ -8,8 +8,7 @@ logging:
     io.rsocket.routing.broker: DEBUG
 #    io.rsocket.routing.broker: TRACE
 ---
-spring:
-  profiles: broker2
+spring.config.activate.on-profile: broker2
 
 io.rsocket.routing.broker:
   broker-id: 00000000-0000-0000-0000-000000000012
