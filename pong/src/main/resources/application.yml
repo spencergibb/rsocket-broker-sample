@@ -33,3 +33,16 @@ io.rsocket.routing.client:
     - tcp:
         host: localhost
         port: 8003
+
+---
+spring.config.activate.on-profile: broker21
+
+io.rsocket.routing.client:
+  route-id: 00000000-0000-0000-0000-000000000021
+  service-name: pong
+  tags:
+    INSTANCE_NAME: pong21
+  brokers:
+    - tcp:
+        host: localhost
+        port: 8003
