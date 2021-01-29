@@ -1,7 +1,5 @@
 package rsocket.routing.sample.pong;
 
-import io.rsocket.RSocket;
-import io.rsocket.RSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
