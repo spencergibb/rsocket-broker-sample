@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.0-M2</version>
+		<version>2.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>rsocket.routing.sample</groupId>
@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<!--<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>-->
-		<rsocket-routing.version>0.0.2-SNAPSHOT</rsocket-routing.version>
+		<rsocket-routing.version>0.2.0-SNAPSHOT</rsocket-routing.version>
 	</properties>
 
 	<modules>
