@@ -4,9 +4,7 @@ io.rsocket.routing.client:
   tags:
     INSTANCE_NAME: pong3
   brokers:
-    - tcp:
-        host: localhost
-        port: 8002
+    - tcp://localhost:8002
 
 logging:
   level:
@@ -30,9 +28,7 @@ spring.config.activate.on-profile: broker2
 
 io.rsocket.routing.client:
   brokers:
-    - tcp:
-        host: localhost
-        port: 8003
+    - tcp://localhost:8003
 
 ---
 spring.config.activate.on-profile: broker21
@@ -43,6 +39,4 @@ io.rsocket.routing.client:
   tags:
     INSTANCE_NAME: pong21
   brokers:
-    - tcp:
-        host: localhost
-        port: 8003
+    - tcp://localhost:8003

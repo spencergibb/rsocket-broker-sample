@@ -3,9 +3,9 @@ package rsocket.routing.sample.ping;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.rsocket.routing.client.spring.RoutingRSocketRequester;
 import io.rsocket.routing.client.spring.RoutingClientProperties;
 import io.rsocket.routing.client.spring.RoutingMetadata;
+import io.rsocket.routing.client.spring.RoutingRSocketRequester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -45,7 +45,7 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 				Flux.interval(Duration.ofSeconds(1))
 						.flatMap(i -> requester.route("pong-rr")
 								.address("pong")
-								//.address(builder -> builder.with(WellKnownKey.SERVICE_NAME, "pong"))
+								//.address(builder -> builder.routingType(MULTICAST).with(WellKnownKey.SERVICE_NAME, "pong"))
 								//.metadata(metadata.address("pong"))
 								.data("ping" + i)
 								.retrieveMono(String.class)

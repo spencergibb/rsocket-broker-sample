@@ -7,9 +7,7 @@ io.rsocket.routing.client:
     pong-rc:
       service_name: pong
   brokers:
-    - tcp:
-        host: localhost
-        port: 8002
+    - tcp://localhost:8002
 
 server:
   port: 0
@@ -30,7 +28,5 @@ spring.config.activate.on-profile: broker2
 
 io.rsocket.routing.client:
     brokers:
-      - tcp:
-          host: localhost
-          port: 8003
+      - tcp://localhost:8003
 
