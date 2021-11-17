@@ -1,4 +1,4 @@
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   route-id: 00000000-0000-0000-0000-000000000001
   service-name: ping
   tags:
@@ -15,7 +15,7 @@ server:
 ---
 spring.config.activate.on-profile: ping2
 
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   route-id: 00000000-0000-0000-0000-000000000002
   tags:
     INSTANCE_NAME: ping2
@@ -26,7 +26,7 @@ ping:
 ---
 spring.config.activate.on-profile: broker2
 
-io.rsocket.routing.client:
+io.rsocket.broker.client:
     brokers:
       - tcp://localhost:8003
 

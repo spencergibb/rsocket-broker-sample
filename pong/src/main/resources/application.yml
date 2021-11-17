@@ -1,4 +1,4 @@
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   route-id: 00000000-0000-0000-0000-000000000003
   service-name: pong
   tags:
@@ -8,7 +8,7 @@ io.rsocket.routing.client:
 
 logging:
   level:
-    io.rsocket.routing.client: INFO
+    io.rsocket.broker.client: INFO
 ---
 spring.config.activate.on-profile: server
 pong:
@@ -17,7 +17,7 @@ pong:
 ---
 spring.config.activate.on-profile: pong4
 
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   route-id: 00000000-0000-0000-0000-000000000004
   service-name: pong
   tags:
@@ -26,14 +26,14 @@ io.rsocket.routing.client:
 ---
 spring.config.activate.on-profile: broker2
 
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   brokers:
     - tcp://localhost:8003
 
 ---
 spring.config.activate.on-profile: broker21
 
-io.rsocket.routing.client:
+io.rsocket.broker.client:
   route-id: 00000000-0000-0000-0000-000000000021
   service-name: pong
   tags:

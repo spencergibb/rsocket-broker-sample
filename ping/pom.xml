@@ -3,8 +3,8 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>rsocket.routing.sample</groupId>
-		<artifactId>rsocket-routing-sample</artifactId>
+		<groupId>rsocket.broker.sample</groupId>
+		<artifactId>rsocket-broker-sample</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -22,12 +22,12 @@
 			<artifactId>spring-boot-starter-rsocket</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.rsocket.routing</groupId>
-			<artifactId>rsocket-routing-client-spring</artifactId>
+			<groupId>io.rsocket.broker</groupId>
+			<artifactId>rsocket-broker-client-spring</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.rsocket.routing</groupId>
-			<artifactId>rsocket-routing-frames</artifactId>
+			<groupId>io.rsocket.broker</groupId>
+			<artifactId>rsocket-broker-frames</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

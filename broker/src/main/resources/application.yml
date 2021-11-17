@@ -1,16 +1,16 @@
-io.rsocket.routing.broker:
+io.rsocket.broker:
   broker-id: 00000000-0000-0000-0000-000000000011
   uri: tcp://localhost:8002
   cluster.uri: tcp://localhost:7002
 
 logging:
   level:
-    io.rsocket.routing.broker: DEBUG
-#    io.rsocket.routing.broker: TRACE
+    io.rsocket.broker.broker: DEBUG
+#    io.rsocket.broker.broker: TRACE
 ---
 spring.config.activate.on-profile: broker2
 
-io.rsocket.routing.broker:
+io.rsocket.broker:
   broker-id: 00000000-0000-0000-0000-000000000012
   uri: tcp://localhost:8003
   cluster.uri: tcp://localhost:7003

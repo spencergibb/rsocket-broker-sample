@@ -8,8 +8,8 @@
 		<version>2.6.0-RC1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>rsocket.routing.sample</groupId>
-	<artifactId>rsocket-routing-sample</artifactId>
+	<groupId>rsocket.broker.sample</groupId>
+	<artifactId>rsocket-broker-sample</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>rsocket-routing-sample</name>
@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<!--<spring-cloud.version>Hoxton.BUILD-SNAPSHOT</spring-cloud.version>-->
-		<rsocket-routing.version>0.3.0-SNAPSHOT</rsocket-routing.version>
+		<rsocket-broker.version>0.3.0-SNAPSHOT</rsocket-broker.version>
 	</properties>
 
 	<modules>
@@ -36,19 +36,19 @@
 				<scope>import</scope>
 			</dependency>-->
 			<dependency>
-				<groupId>io.rsocket.routing</groupId>
-				<artifactId>rsocket-routing-client-spring</artifactId>
-				<version>${rsocket-routing.version}</version>
+				<groupId>io.rsocket.broker</groupId>
+				<artifactId>rsocket-broker-client-spring</artifactId>
+				<version>${rsocket-broker.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.rsocket.routing</groupId>
-				<artifactId>rsocket-routing-broker-spring</artifactId>
-				<version>${rsocket-routing.version}</version>
+				<groupId>io.rsocket.broker</groupId>
+				<artifactId>rsocket-broker-spring</artifactId>
+				<version>${rsocket-broker.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.rsocket.routing</groupId>
-				<artifactId>rsocket-routing-frames</artifactId>
-				<version>${rsocket-routing.version}</version>
+				<groupId>io.rsocket.broker</groupId>
+				<artifactId>rsocket-broker-frames</artifactId>
+				<version>${rsocket-broker.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

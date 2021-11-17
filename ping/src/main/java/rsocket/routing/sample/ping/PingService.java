@@ -3,9 +3,9 @@ package rsocket.routing.sample.ping;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.rsocket.routing.client.spring.RoutingClientProperties;
-import io.rsocket.routing.client.spring.RoutingMetadata;
-import io.rsocket.routing.client.spring.RoutingRSocketRequester;
+import io.rsocket.broker.client.spring.BrokerClientProperties;
+import io.rsocket.broker.client.spring.BrokerMetadata;
+import io.rsocket.broker.client.spring.BrokerRSocketRequester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -20,16 +20,16 @@ public class PingService implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(PingService.class);
 
-	private final RoutingRSocketRequester requester;
-	private final RoutingMetadata metadata;
+	private final BrokerRSocketRequester requester;
+	private final BrokerMetadata metadata;
 
 	private final PingProperties properties;
-	private final RoutingClientProperties routingClientProperties;
+	private final BrokerClientProperties routingClientProperties;
 
 	private final AtomicInteger pongsReceived = new AtomicInteger();
 
-	public PingService(RoutingRSocketRequester requester, RoutingMetadata metadata, PingProperties properties,
-			RoutingClientProperties routingClientProperties) {
+	public PingService(BrokerRSocketRequester requester, BrokerMetadata metadata, PingProperties properties,
+			BrokerClientProperties routingClientProperties) {
 		this.requester = requester;
 		this.metadata = metadata;
 		this.properties = properties;
