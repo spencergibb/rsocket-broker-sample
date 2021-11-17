@@ -1,4 +1,4 @@
-# Spring Cloud Broker RSocket Sample
+# RSocket Broker Sample
 
 ## TODO:
 
